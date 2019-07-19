@@ -63,6 +63,7 @@ class Plugin(QObject):
         self.app.session_manager.sessionCreated.connect(self._on_session_created)
         self.app.session_manager.sessionStopped.connect(self._on_session_stopped)
         self.app.onUIElementCreated.connect(self._on_ui_element_created)
+        self.app.onSystemUIElementRemoved.connect(self._on_close_tab)
 
     def _on_session_created(self):
         self.emulator = Emulator(self.app.dwarf)
@@ -134,7 +135,6 @@ class Plugin(QObject):
         from plugins.ucdwarf.src.panel_emulator import EmulatorPanel
         self.emulator_panel = EmulatorPanel(self)
         self.app.main_tabs.addTab(self.emulator_panel, 'Emulator')
-        self.app.onSystemUIElementRemoved.connect(self._on_close_tab)
         return self.emulator_panel
 
     def log(self, what):

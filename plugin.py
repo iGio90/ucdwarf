@@ -62,7 +62,7 @@ class Plugin(QObject):
 
         self.app.session_manager.sessionCreated.connect(self._on_session_created)
         self.app.session_manager.sessionStopped.connect(self._on_session_stopped)
-        self.app.onUIElementCreated.connect(self._on_ui_element_created)
+        self.app.onSystemUIElementCreated.connect(self._on_ui_element_created)
         self.app.onSystemUIElementRemoved.connect(self._on_close_tab)
 
     def _on_session_created(self):

@@ -73,6 +73,8 @@ class Plugin(QObject):
 
         self.onEmulatorApi.connect(self._on_emulator_api)
 
+        self.app.panels_menu.addSeparator()
+        self.app.panels_menu.addAction('Emulator', self.create_widget)
         self.create_widget()
 
     def _on_session_stopped(self):
@@ -121,10 +123,18 @@ class Plugin(QObject):
             self.emulator_context_widget = EmulatorContextList(self.context_widget)
             self.context_widget.addTab(self.emulator_context_widget, 'emulator')
 
+    def _on_close_tab(self, tab_name):
+        if tab_name == 'emulator':
+            self.emulator_panel = None
+
     def create_widget(self):
+        if self.emulator_panel is not None:
+            return self.emulator_panel
+
         from plugins.ucdwarf.src.panel_emulator import EmulatorPanel
         self.emulator_panel = EmulatorPanel(self)
         self.app.main_tabs.addTab(self.emulator_panel, 'Emulator')
+        self.app.onSystemUIElementRemoved.connect(self._on_close_tab)
         return self.emulator_panel
 
     def log(self, what):

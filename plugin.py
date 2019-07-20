@@ -76,7 +76,6 @@ class Plugin(QObject):
 
         self.app.panels_menu.addSeparator()
         self.app.panels_menu.addAction('Emulator', self.create_widget)
-        self.create_widget()
 
     def _on_session_stopped(self):
         pass

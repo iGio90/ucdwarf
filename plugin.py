@@ -134,6 +134,7 @@ class Plugin(QObject):
         from plugins.ucdwarf.src.panel_emulator import EmulatorPanel
         self.emulator_panel = EmulatorPanel(self)
         self.app.main_tabs.addTab(self.emulator_panel, 'Emulator')
+        self.app.main_tabs.setCurrentIndex(self.app.main_tabs.indexOf(self.emulator_panel))
         return self.emulator_panel
 
     def log(self, what):

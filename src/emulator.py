@@ -419,9 +419,7 @@ class Emulator(QThread):
         self.instructions_delay = self._prefs.get(EMULATOR_INSTRUCTIONS_DELAY, 0)
 
     def map_range(self, address):
-        range_ = Range(self.dwarf)
-        if range_.init_with_address(address) > 0:
-            return 300
+        range_ = Range.build_or_get(self.dwarf, address)
         try:
             self.uc.mem_map(range_.base, range_.size)
         except Exception as e:

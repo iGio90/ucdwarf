@@ -267,36 +267,35 @@ class EmulatorPanel(QWidget):
         self.assembly.viewport().update()
 
         if instruction.is_call:
-            range_ = Range(self.app.dwarf)
-            if range_.init_with_address(instruction.address, require_data=False) > 0:
-                if range_.base > instruction.call_address > range_.tail:
-                    if self.emulator.step_mode == STEP_MODE_NONE:
-                        self.emulator.stop()
-                    action = JumpOutsideTheBoxDialog.show_dialog(self.app.dwarf)
-                    if action == 0:
-                        # step to jump
-                        if self.emulator.step_mode != STEP_MODE_NONE:
-                            self.handle_step()
-                        else:
-                            self.emulator.emulate(
-                                self.until_address, user_arch=self._uc_user_arch,
-                                user_mode=self._uc_user_mode, cs_arch=self._cs_user_arch,
-                                cs_mode=self._cs_user_mode)
-                    if action == 1:
-                        # step to next jump
-                        if self.emulator.step_mode != STEP_MODE_NONE:
-                            self.handle_step_next_jump()
-                        else:
-                            self.emulator.emulate(
-                                self.until_address, user_arch=self._uc_user_arch,
-                                user_mode=self._uc_user_mode, cs_arch=self._cs_user_arch,
-                                cs_mode=self._cs_user_mode)
-                    elif action == 2:
-                        # hook lr
-                        hook_addr = instruction.address + instruction.size
-                        if instruction.thumb:
-                            hook_addr += 1
-                        self.app.dwarf.hook_native(input_=hex(hook_addr))
+            range_ = Range.build_or_get(self.app.dwarf, instruction.address)
+            if range_.base > instruction.call_address > range_.tail:
+                if self.emulator.step_mode == STEP_MODE_NONE:
+                    self.emulator.stop()
+                action = JumpOutsideTheBoxDialog.show_dialog(self.app.dwarf)
+                if action == 0:
+                    # step to jump
+                    if self.emulator.step_mode != STEP_MODE_NONE:
+                        self.handle_step()
+                    else:
+                        self.emulator.emulate(
+                            self.until_address, user_arch=self._uc_user_arch,
+                            user_mode=self._uc_user_mode, cs_arch=self._cs_user_arch,
+                            cs_mode=self._cs_user_mode)
+                if action == 1:
+                    # step to next jump
+                    if self.emulator.step_mode != STEP_MODE_NONE:
+                        self.handle_step_next_jump()
+                    else:
+                        self.emulator.emulate(
+                            self.until_address, user_arch=self._uc_user_arch,
+                            user_mode=self._uc_user_mode, cs_arch=self._cs_user_arch,
+                            cs_mode=self._cs_user_mode)
+                elif action == 2:
+                    # hook lr
+                    hook_addr = instruction.address + instruction.size
+                    if instruction.thumb:
+                        hook_addr += 1
+                    self.app.dwarf.hook_native(input_=hex(hook_addr))
 
     def on_emulator_log(self, log):
         self.app.console_panel.show_console_tab('emulator')

@@ -21,8 +21,8 @@ from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QToolBar, QDialog, QLabel, QPushButton,
                              QComboBox)
 from plugins.ucdwarf.src.dialog_emulator_configs import EmulatorConfigsDialog
-from ui.dialog_input import InputDialog
-from ui.panel_memory import MemoryPanel
+from ui.dialogs.dialog_input import InputDialog
+from ui.panels.panel_memory import MemoryPanel
 from ui.widgets.disasm_view import DisassemblyView
 from ui.widgets.list_view import DwarfListView
 from unicorn import UcError, unicorn_const

@@ -419,22 +419,24 @@ class Emulator(QThread):
         self.instructions_delay = self._prefs.get(EMULATOR_INSTRUCTIONS_DELAY, 0)
 
     def map_range(self, address):
-        range_ = Range.build_or_get(self.dwarf, address)
+        Range.build_or_get(self.dwarf, address, cb=self.on_memory_read)
+        return 0
+
+    def on_memory_read(self, dwarf_range):
         try:
-            self.uc.mem_map(range_.base, range_.size)
+            self.uc.mem_map(dwarf_range.base, dwarf_range.size)
         except Exception as e:
             self.dwarf.log(e)
             return 301
 
         try:
-            self.uc.mem_write(range_.base, range_.data)
+            self.uc.mem_write(dwarf_range.base, dwarf_range.data)
         except Exception as e:
             self.dwarf.log(e)
             return 302
 
-        self.log_to_ui("[*] Mapped %d at 0x%x" % (range_.size, range_.base))
-        self.onEmulatorMemoryRangeMapped.emit([range_.base, range_.size])
-        return 0
+        self.log_to_ui("[*] Mapped %d at 0x%x" % (dwarf_range.size, dwarf_range.base))
+        self.onEmulatorMemoryRangeMapped.emit([dwarf_range.base, dwarf_range.size])
 
     def setup(self, tid=0, user_arch=None, user_mode=None, cs_arch=None, cs_mode=None):
         if tid == 0:

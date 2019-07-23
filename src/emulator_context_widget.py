@@ -27,8 +27,8 @@ class EmulatorContextList(DwarfListView):
         self.customContextMenuRequested.connect(self._on_emulator_contextmenu)
 
     def _on_emulator_contextmenu(self, pos):
-        index = self._emulatorctx_list.indexAt(pos).row()
-        glbl_pt = self._emulatorctx_list.mapToGlobal(pos)
+        index = self.indexAt(pos).row()
+        glbl_pt = self.mapToGlobal(pos)
         context_menu = QMenu(self)
         if index != -1:
             # show contextmenu

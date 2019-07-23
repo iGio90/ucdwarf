@@ -22,8 +22,8 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QToo
                              QComboBox)
 from plugins.ucdwarf.src.dialog_emulator_configs import EmulatorConfigsDialog
 from ui.dialogs.dialog_input import InputDialog
-from ui.panels.panel_memory import MemoryPanel
 from ui.widgets.disasm_view import DisassemblyView
+from ui.widgets.hex_edit import HexEditor
 from ui.widgets.list_view import DwarfListView
 from unicorn import UcError, unicorn_const
 from unicorn.unicorn_const import UC_MEM_READ, UC_MEM_FETCH, UC_MEM_WRITE
@@ -60,15 +60,34 @@ class EmulatorPanel(QWidget):
         selection_layout = QHBoxLayout()
         selection_layout.setAlignment(Qt.AlignRight)
         self.cpu_selection = QComboBox(self)
+        index = 0
         for v in unicorn_const.__dict__:
             if 'UC_ARCH_' in v:
-                self.cpu_selection.addItem('_'.join(v.split('_')[2:]).lower(), unicorn_const.__dict__[v])
+                item = '_'.join(v.split('_')[2:]).lower()
+                if self.app.dwarf.arch == item:
+                    index = self.cpu_selection.count()
+                elif self.app.dwarf.arch == 'x64' and item == 'x86' or self.app.dwarf == 'ia32' and item == 'x86':
+                    index = self.cpu_selection.count()
+
+                self.cpu_selection.addItem(item, unicorn_const.__dict__[v])
+
         self.cpu_selection.activated[str].connect(self._on_cpu_selection)
+        self.cpu_selection.setCurrentIndex(index)
         self.mode_selection = QComboBox(self)
+        index = 0
         for v in unicorn_const.__dict__:
             if 'UC_MODE_' in v:
-                self.mode_selection.addItem('_'.join(v.split('_')[2:]).lower(), unicorn_const.__dict__[v])
+                item = '_'.join(v.split('_')[2:]).lower()
+                if self.app.dwarf.arch == item:
+                    index = self.mode_selection.count()
+                elif (self.app.dwarf.arch == 'x64' or self.app.dwarf.arch == 'arm64') and item == '64':
+                    index = self.mode_selection.count()
+                elif self.app.dwarf.arch == 'ia32' and item == '32':
+                    index = self.mode_selection.count()
+
+                self.mode_selection.addItem(item, unicorn_const.__dict__[v])
         self.mode_selection.activated[str].connect(self._on_mode_selection)
+        self.mode_selection.setCurrentIndex(index)
         selection_layout.addWidget(self.cpu_selection)
         selection_layout.addWidget(self.mode_selection)
         self._toolbar_container.addLayout(selection_layout)
@@ -79,10 +98,10 @@ class EmulatorPanel(QWidget):
         self.assembly = DisassemblyView(self.app)
         self.assembly.display_jumps = False
         self.assembly.follow_jumps = False
-        self.memory_table = MemoryPanel(self.app)
-        self.memory_table._read_only = True
+        #self.memory_table = HexEditor(self.app)
+        #self.memory_table._read_only = True
         self.tabs.addTab(self.assembly, 'Code')
-        self.tabs.addTab(self.memory_table, 'Memory')
+        #self.tabs.addTab(self.memory_table, 'Memory')
 
         layout.addWidget(self.tabs)
 
@@ -442,14 +461,14 @@ class EmulatorPanel(QWidget):
         row = self._ranges_model.itemFromIndex(model_index).row()
         if row != -1:
             item = self._ranges_model.item(row, 0).text()
-            self.memory_table.read_memory(item)
+            #self.memory_table.read_memory(item)
             self.tabs.setCurrentIndex(1)
 
     def access_item_double_clicked(self, model_index):
         row = self._access_model.itemFromIndex(model_index).row()
         if row != -1:
             item = self._access_model.item(row, 0).text()
-            self.memory_table.read_memory(item)
+            #self.memory_table.read_memory(item)
             self.tabs.setCurrentIndex(1)
 
 

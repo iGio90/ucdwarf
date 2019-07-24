@@ -26,10 +26,6 @@ function Emulator() {
         loggedSend('emulator:::step:::2')
     };
 
-    this.stepJump = function () {
-        loggedSend('emulator:::step:::3')
-    };
-
     this.stop = function () {
         loggedSend('emulator:::stop')
     };

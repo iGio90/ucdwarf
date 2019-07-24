@@ -37,7 +37,6 @@ VFP = "4ff4700001ee500fbff36f8f4ff08043e8ee103a"
 STEP_MODE_NONE = 0
 STEP_MODE_SINGLE = 1
 STEP_MODE_FUNCTION = 2
-STEP_MODE_JUMP = 3
 
 
 class EmulatorThread(QThread):
@@ -109,6 +108,7 @@ class Emulator(QThread):
         self._current_instruction = 0
         self._next_instruction = 0
         self._current_cpu_mode = 0
+        self._last_emulated_instruction = None
 
         self._request_stop = False
 
@@ -295,6 +295,7 @@ class Emulator(QThread):
         self._next_instruction = 0
         self._current_cpu_mode = 0
         self.context = None
+        self._last_emulated_instruction = None
         return 0
 
     def hook_code(self, uc, address, size, user_data):
@@ -360,8 +361,6 @@ class Emulator(QThread):
                 else:
                     if instruction.is_call:
                         self._next_instruction = instruction.call_address
-                    elif instruction.is_jump:
-                        self._next_instruction = instruction.jump_address
 
                     if instruction.should_change_arm_instruction_set:
                         if self.thumb:
@@ -380,14 +379,16 @@ class Emulator(QThread):
             return
 
         if self.step_mode != STEP_MODE_NONE:
+            if instruction.is_jump:
+                # do not break at jump as we should calculate next instruction properly
+                return
+
             if self.step_mode == STEP_MODE_SINGLE:
                 self.stop()
-            elif self.step_mode == STEP_MODE_FUNCTION:
-                if instruction is not None and instruction.is_call:
+            else:
+                if instruction.is_call and self.step_mode == STEP_MODE_FUNCTION:
                     self.stop()
-            elif self.step_mode == STEP_MODE_JUMP:
-                if instruction is not None and instruction.is_jump:
-                    self.stop()
+        self._last_emulated_instruction = instruction
 
     def hook_mem_access(self, uc, access, address, size, value, user_data):
         v = value
@@ -524,8 +525,6 @@ class Emulator(QThread):
                 self.log_to_ui('[*] stepping %s' % hex(address))
             elif step_mode == STEP_MODE_FUNCTION:
                 self.log_to_ui('[*] stepping to next function call')
-            elif step_mode == STEP_MODE_JUMP:
-                self.log_to_ui('[*] stepping to next jump')
         self.onEmulatorStart.emit()
 
         # invalidate prefs before start

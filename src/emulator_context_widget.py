@@ -35,6 +35,8 @@ class EmulatorContextList(DwarfListView):
             context_menu.exec_(glbl_pt)
 
     def set_context(self, ptr, context):
+        self._emulatorctx_model.setRowCount(0)
+
         self.context_tab_widget.setCurrentIndex(self.context_tab_widget.indexOf(self))
 
         context_ptr = ptr

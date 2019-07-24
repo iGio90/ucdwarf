@@ -14,7 +14,7 @@ Dwarf - Copyright (C) 2019 Giovanni Rocca (iGio90)
 import capstone
 
 from lib.types.range import Range
-from plugins.ucdwarf.src.emulator import STEP_MODE_NONE, STEP_MODE_SINGLE, STEP_MODE_FUNCTION, STEP_MODE_JUMP
+from plugins.ucdwarf.src.emulator import STEP_MODE_NONE, STEP_MODE_SINGLE, STEP_MODE_FUNCTION
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QToolBar, QDialog, QLabel, QPushButton,
@@ -49,7 +49,6 @@ class EmulatorPanel(QWidget):
         self._toolbar.addAction('Start', self.handle_start)
         self._toolbar.addAction('Step', self.handle_step)
         self._toolbar.addAction('Step next call', self.handle_step_next_call)
-        self._toolbar.addAction('Step next jump', self.handle_step_next_jump)
         self._toolbar.addAction('Stop', self.handle_stop)
         self._toolbar.addAction('Clear', self.handle_clear)
         self._toolbar.addAction('Options', self.handle_options)
@@ -217,20 +216,6 @@ class EmulatorPanel(QWidget):
             self.until_address = 0
             self.console.log(error)
 
-    def handle_step_next_jump(self):
-        self.app.console_panel.show_console_tab('emulator')
-
-        try:
-            self.emulator.emulate(
-                step_mode=STEP_MODE_JUMP, user_arch=self._uc_user_arch,
-                user_mode=self._uc_user_mode, cs_arch=self._cs_user_arch,
-                cs_mode=self._cs_user_mode)
-        except self.emulator.EmulatorAlreadyRunningError:
-            self.console.log('Emulator already running')
-        except self.emulator.EmulatorSetupFailedError as error:
-            self.until_address = 0
-            self.console.log(error)
-
     def handle_stop(self):
         self.emulator.stop()
 
@@ -268,7 +253,9 @@ class EmulatorPanel(QWidget):
         # add empty line if jump
         if instruction.is_jump or instruction.is_call:
             self.assembly.add_instruction(None)
-            self._require_register_result = [instruction.jump_address]
+            self._require_register_result = [
+                instruction.jump_address if instruction.is_jump else instruction.call_address
+            ]
         else:
             # implicit regs read are notified later through mem access
             if len(instruction.regs_read) == 0:

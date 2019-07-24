@@ -77,12 +77,6 @@ class Plugin(QObject):
         self.app.panels_menu.addSeparator()
         self.app.panels_menu.addAction('Emulator', self.create_widget)
 
-        for menu in self.app.session_manager.session.main_menu:
-            title = menu.title()
-            if title == '&Process':
-                menu.addSeparator()
-                menu.addAction('Step', self.on_step)
-
     def _on_session_stopped(self):
         pass
 

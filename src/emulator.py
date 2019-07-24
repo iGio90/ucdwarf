@@ -16,14 +16,15 @@ Dwarf - Copyright (C) 2019 Giovanni Rocca (iGio90)
 """
 import binascii
 
+import capstone
 import unicorn
 
-from lib.disassembler import (Cs, CS_ARCH_ARM, CS_ARCH_ARM64, CS_ARCH_X86, CS_MODE_32,
-                              CS_MODE_64, CS_MODE_ARM, CS_MODE_THUMB,
-                              CS_MODE_LITTLE_ENDIAN)
+from capstone import (Cs, CS_ARCH_ARM, CS_ARCH_ARM64, CS_ARCH_X86, CS_MODE_32,
+                      CS_MODE_64, CS_MODE_ARM, CS_MODE_THUMB,
+                      CS_MODE_LITTLE_ENDIAN)
 from importlib._bootstrap import spec_from_loader, module_from_spec
 from importlib._bootstrap_external import SourceFileLoader
-from lib import utils, disassembler
+from lib import utils
 from lib.types.instruction import Instruction
 from lib.prefs import Prefs
 from lib.types.range import Range
@@ -32,7 +33,6 @@ from PyQt5.QtCore import pyqtSignal, QThread
 from plugins.ucdwarf.src.emulator_context import EmulatorContext
 
 VFP = "4ff4700001ee500fbff36f8f4ff08043e8ee103a"
-
 
 STEP_MODE_NONE = 0
 STEP_MODE_SINGLE = 1
@@ -249,12 +249,12 @@ class Emulator(QThread):
                     if arch in unicorn.__dict__:
                         custom_uc_arch = unicorn.__dict__[arch]
                         arch = 'CS_ARCH_' + parts[2].upper()
-                        custom_cs_arch = disassembler.__dict__[arch]
+                        custom_cs_arch = capstone.__dict__[arch]
                     mode = 'UC_MODE_' + parts[3].upper()
                     if mode in unicorn.__dict__:
                         custom_uc_mode = unicorn.__dict__[mode]
                         mode = 'CS_MODE_' + parts[3].upper()
-                        custom_cs_mode = disassembler.__dict__[mode]
+                        custom_cs_mode = capstone.__dict__[mode]
                 except:
                     custom_uc_arch = None
                     custom_cs_arch = None
@@ -263,7 +263,7 @@ class Emulator(QThread):
 
             if custom_uc_arch is not None and custom_uc_mode is not None:
                 err = self.setup(
-                    parts[1], user_arch=custom_uc_arch, user_mode= custom_uc_mode,
+                    parts[1], user_arch=custom_uc_arch, user_mode=custom_uc_mode,
                     cs_arch=custom_cs_arch, cs_mode=custom_cs_mode)
             else:
                 err = self.setup(parts[1])

@@ -16,15 +16,14 @@ Dwarf - Copyright (C) 2019 Giovanni Rocca (iGio90)
 """
 import binascii
 
-import capstone
 import unicorn
 
-from capstone import (Cs, CS_ARCH_ARM, CS_ARCH_ARM64, CS_ARCH_X86, CS_MODE_32,
-                      CS_MODE_64, CS_MODE_ARM, CS_MODE_THUMB,
-                      CS_MODE_LITTLE_ENDIAN)
+from lib.disassembler import (Cs, CS_ARCH_ARM, CS_ARCH_ARM64, CS_ARCH_X86, CS_MODE_32,
+                              CS_MODE_64, CS_MODE_ARM, CS_MODE_THUMB,
+                              CS_MODE_LITTLE_ENDIAN)
 from importlib._bootstrap import spec_from_loader, module_from_spec
 from importlib._bootstrap_external import SourceFileLoader
-from lib import utils
+from lib import utils, disassembler
 from lib.types.instruction import Instruction
 from lib.prefs import Prefs
 from lib.types.range import Range
@@ -250,12 +249,12 @@ class Emulator(QThread):
                     if arch in unicorn.__dict__:
                         custom_uc_arch = unicorn.__dict__[arch]
                         arch = 'CS_ARCH_' + parts[2].upper()
-                        custom_cs_arch = capstone.__dict__[arch]
+                        custom_cs_arch = disassembler.__dict__[arch]
                     mode = 'UC_MODE_' + parts[3].upper()
                     if mode in unicorn.__dict__:
                         custom_uc_mode = unicorn.__dict__[mode]
                         mode = 'CS_MODE_' + parts[3].upper()
-                        custom_cs_mode = capstone.__dict__[mode]
+                        custom_cs_mode = disassembler.__dict__[mode]
                 except:
                     custom_uc_arch = None
                     custom_cs_arch = None

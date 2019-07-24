@@ -11,8 +11,8 @@ Dwarf - Copyright (C) 2019 Giovanni Rocca (iGio90)
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
-import capstone
-from capstone import CS_OP_REG
+from lib import disassembler
+from lib.disassembler import CS_OP_REG
 
 from lib.types.range import Range
 from plugins.ucdwarf.src.emulator import STEP_MODE_NONE, STEP_MODE_SINGLE, STEP_MODE_FUNCTION, STEP_MODE_JUMP
@@ -23,7 +23,6 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QToo
 from plugins.ucdwarf.src.dialog_emulator_configs import EmulatorConfigsDialog
 from ui.dialogs.dialog_input import InputDialog
 from ui.widgets.disasm_view import DisassemblyView
-from ui.widgets.hex_edit import HexEditor
 from ui.widgets.list_view import DwarfListView
 from unicorn import UcError, unicorn_const
 from unicorn.unicorn_const import UC_MEM_READ, UC_MEM_FETCH, UC_MEM_WRITE
@@ -144,18 +143,18 @@ class EmulatorPanel(QWidget):
 
     def _on_cpu_selection(self, cpu):
         self._uc_user_arch = unicorn_const.__dict__['UC_ARCH_' + cpu.upper()]
-        self._cs_user_arch = capstone.__dict__['CS_ARCH_' + cpu.upper()]
+        self._cs_user_arch = disassembler.__dict__['CS_ARCH_' + cpu.upper()]
         self._uc_user_mode = unicorn_const.__dict__['UC_MODE_' + self.mode_selection.itemText(
             self.mode_selection.currentIndex()).upper()]
-        self._cs_user_mode = capstone.__dict__['CS_MODE_' + self.mode_selection.itemText(
+        self._cs_user_mode = disassembler.__dict__['CS_MODE_' + self.mode_selection.itemText(
             self.mode_selection.currentIndex()).upper()]
 
     def _on_mode_selection(self, mode):
         self._uc_user_mode = unicorn_const.__dict__['UC_MODE_' + mode.upper()]
-        self._cs_user_mode = capstone.__dict__['CS_MODE_' + mode.upper()]
+        self._cs_user_mode = disassembler.__dict__['CS_MODE_' + mode.upper()]
         self._uc_user_arch = unicorn_const.__dict__['UC_ARCH_' + self.cpu_selection.itemText(
             self.cpu_selection.currentIndex()).upper()]
-        self._cs_user_arch = capstone.__dict__['CS_ARCH_' + self.cpu_selection.itemText(
+        self._cs_user_arch = disassembler.__dict__['CS_ARCH_' + self.cpu_selection.itemText(
             self.cpu_selection.currentIndex()).upper()]
 
     def resizeEvent(self, event):

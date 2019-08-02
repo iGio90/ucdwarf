@@ -13,16 +13,16 @@ Dwarf - Copyright (C) 2019 Giovanni Rocca (iGio90)
 """
 import capstone
 
-from lib.types.range import Range
+from dwarf.lib.types.range import Range
+from dwarf.ui.dialogs.dialog_input import InputDialog
+from dwarf.ui.widgets.disasm_view import DisassemblyView
+from dwarf.ui.widgets.list_view import DwarfListView
 from plugins.ucdwarf.src.emulator import STEP_MODE_NONE, STEP_MODE_SINGLE, STEP_MODE_FUNCTION
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QToolBar, QDialog, QLabel, QPushButton,
                              QComboBox)
 from plugins.ucdwarf.src.dialog_emulator_configs import EmulatorConfigsDialog
-from ui.dialogs.dialog_input import InputDialog
-from ui.widgets.disasm_view import DisassemblyView
-from ui.widgets.list_view import DwarfListView
 from unicorn import UcError, unicorn_const
 from unicorn.unicorn_const import UC_MEM_READ, UC_MEM_FETCH, UC_MEM_WRITE
 

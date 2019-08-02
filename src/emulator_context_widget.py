@@ -2,7 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QColor
 from PyQt5.QtWidgets import QHeaderView, QMenu
 
-from ui.widgets.list_view import DwarfListView
+from dwarf.ui.widgets.list_view import DwarfListView
 
 
 class EmulatorContextList(DwarfListView):

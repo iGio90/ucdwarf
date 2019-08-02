@@ -24,12 +24,12 @@ from capstone import (Cs, CS_ARCH_ARM, CS_ARCH_ARM64, CS_ARCH_X86, CS_MODE_32,
                       CS_MODE_LITTLE_ENDIAN)
 from importlib._bootstrap import spec_from_loader, module_from_spec
 from importlib._bootstrap_external import SourceFileLoader
-from lib import utils
-from lib.types.instruction import Instruction
-from lib.prefs import Prefs
-from lib.types.range import Range
 from PyQt5.QtCore import pyqtSignal, QThread
 
+from dwarf.lib import utils
+from dwarf.lib.prefs import Prefs
+from dwarf.lib.types.instruction import Instruction
+from dwarf.lib.types.range import Range
 from plugins.ucdwarf.src.emulator_context import EmulatorContext
 
 VFP = "4ff4700001ee500fbff36f8f4ff08043e8ee103a"

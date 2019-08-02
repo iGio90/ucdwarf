@@ -16,8 +16,7 @@ Dwarf - Copyright (C) 2019 Giovanni Rocca (iGio90)
 """
 from PyQt5.QtWidgets import *
 
-from lib import prefs
-from lib.prefs import Prefs
+from dwarf.lib.prefs import Prefs
 from plugins.ucdwarf.plugin import EMULATOR_INSTRUCTIONS_DELAY, EMULATOR_CALLBACKS_PATH
 
 

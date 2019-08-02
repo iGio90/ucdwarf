@@ -18,9 +18,9 @@ import os
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
+from dwarf.ui.widgets.widget_console import DwarfConsoleWidget
 from plugins.ucdwarf.src.emulator import Emulator, EmulatorThread
 from plugins.ucdwarf.src.emulator_context_widget import EmulatorContextList
-from ui.widgets.widget_console import DwarfConsoleWidget
 
 
 EMULATOR_CALLBACKS_PATH = 'emulator_callbacks_path'

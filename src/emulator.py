@@ -129,7 +129,7 @@ class Emulator(QThread):
         self._anti_loop = 0
 
         # reset single instance preferences
-        from plugins.ucdwarf.plugin import EMULATOR_CALLBACKS_PATH
+        from ucdwarf.plugin import EMULATOR_CALLBACKS_PATH
         self._prefs.put(EMULATOR_CALLBACKS_PATH, '')
 
     def setup_arm(self):
@@ -414,7 +414,7 @@ class Emulator(QThread):
         return True
 
     def invalidate_configurations(self):
-        from plugins.ucdwarf.plugin import EMULATOR_CALLBACKS_PATH, EMULATOR_INSTRUCTIONS_DELAY
+        from ucdwarf.plugin import EMULATOR_CALLBACKS_PATH, EMULATOR_INSTRUCTIONS_DELAY
         self.callbacks_path = self._prefs.get(EMULATOR_CALLBACKS_PATH, '')
         self.instructions_delay = self._prefs.get(EMULATOR_INSTRUCTIONS_DELAY, 0)
 
@@ -541,7 +541,7 @@ class Emulator(QThread):
             except Exception as e:
                 self.log_to_ui('[*] failed to load callbacks: %s' % str(e))
                 # reset callbacks path
-                from plugins.ucdwarf.plugin import EMULATOR_CALLBACKS_PATH
+                from ucdwarf.plugin import EMULATOR_CALLBACKS_PATH
                 self._prefs.put(EMULATOR_CALLBACKS_PATH, '')
                 self.callbacks_path = ''
                 self.callbacks = None

@@ -5,7 +5,7 @@ integrate unicorn emulator into dwarf.
 ### Installation
 
 ```
-cd %Dwarf%/plugins/
+cd ~/.dwarf/plugins/
 
 git clone https://github.com/iGio90/ucdwarf
 

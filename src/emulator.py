@@ -30,7 +30,7 @@ from dwarf.lib import utils
 from dwarf.lib.prefs import Prefs
 from dwarf.lib.types.instruction import Instruction
 from dwarf.lib.types.range import Range
-from plugins.ucdwarf.src.emulator_context import EmulatorContext
+from ucdwarf.src.emulator_context import EmulatorContext
 
 VFP = "4ff4700001ee500fbff36f8f4ff08043e8ee103a"
 

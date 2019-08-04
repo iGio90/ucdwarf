@@ -1,7 +1,8 @@
-from dwarf.lib.types.range import Range
-
-
-class EmulatorRange(Range):
+class EmulatorRange:
+    def __init__(self, base, size):
+        self.base = base
+        self.size = size
+        self.data = bytes()
 
     def read_data(self, dwarf):
         uc = dwarf.get_emulator().uc

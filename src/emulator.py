@@ -29,7 +29,6 @@ from PyQt5.QtCore import pyqtSignal, QThread
 from dwarf.lib import utils
 from dwarf.lib.prefs import Prefs
 from dwarf.lib.types.instruction import Instruction
-from dwarf.lib.types.range import Range
 from ucdwarf.src.emulator_context import EmulatorContext
 
 VFP = "4ff4700001ee500fbff36f8f4ff08043e8ee103a"
@@ -419,24 +418,25 @@ class Emulator(QThread):
         self.instructions_delay = self._prefs.get(EMULATOR_INSTRUCTIONS_DELAY, 0)
 
     def map_range(self, address):
-        Range.build_or_get(self.dwarf, address, cb=self.on_memory_read)
+        self.dwarf.io.read_range_async(address, self.on_memory_read)
         return 0
 
-    def on_memory_read(self, dwarf_range):
+    def on_memory_read(self, base, data, offset):
+        size = len(data)
         try:
-            self.uc.mem_map(dwarf_range.base, dwarf_range.size)
+            self.uc.mem_map(base, size)
         except Exception as e:
             self.dwarf.log(e)
             return 301
 
         try:
-            self.uc.mem_write(dwarf_range.base, dwarf_range.data)
+            self.uc.mem_write(base, data)
         except Exception as e:
             self.dwarf.log(e)
             return 302
 
-        self.log_to_ui("[*] Mapped %d at 0x%x" % (dwarf_range.size, dwarf_range.base))
-        self.onEmulatorMemoryRangeMapped.emit([dwarf_range.base, dwarf_range.size])
+        self.log_to_ui("[*] Mapped %d at 0x%x" % (size, base))
+        self.onEmulatorMemoryRangeMapped.emit([base, size])
 
     def setup(self, tid=0, user_arch=None, user_mode=None, cs_arch=None, cs_mode=None):
         if tid == 0:
